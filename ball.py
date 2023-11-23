@@ -3,6 +3,9 @@ import game_world
 import game_framework
 import random
 
+import server
+
+
 class Ball:
     image = None
 
@@ -13,15 +16,23 @@ class Ball:
         self.y = y if y else random.randint(100, 924)
 
     def draw(self):
-        self.image.draw(self.x, self.y)
+        self.sx, self.sy = self.x - server.background.window_left, self.y - server.background.window_bottom
+        # 소년을 화면 한 가운데 그림
+        self.image.clip_draw(0,0,21, 21, self.sx, self.sy)
+
+
         draw_rectangle(*self.get_bb())
 
     def update(self):
+
         pass
 
     def get_bb(self):
-        return self.x - 10, self.y - 10, self.x + 10, self.y + 10
+        self.sx, self.sy = self.x - server.background.window_left, self.y - server.background.window_bottom
+        return self.sx - 10, self.sy - 10, self.sx + 10, self.sy + 10
 
     def handle_collision(self, group, other):
-	pass
-
+        match group:
+            case 'boy:ball':
+                game_world.remove_object(self)
+                print('a')
